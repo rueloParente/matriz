@@ -3,40 +3,51 @@
       th:replace="~{layout/base :: layout(~{::title}, ~{::main})}">
 <head><title th:text="${project.key} + ' board'">Board</title></head>
 <body>
-<main class="container py-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 m-0" th:text="${project.key} + ' · ' + ${project.name}">PROJ · Name</h1>
+<main class="board-workspace">
+  <header class="workspace-heading">
     <div>
-      <a class="btn btn-outline-secondary" th:href="@{/projects/{key}/issues(key=${project.key})}">List</a>
-      <a th:if="${projectRole == 'OWNER'}" class="btn btn-primary" th:href="@{/projects/{key}/issues/new(key=${project.key})}">New issue</a>
+      <a class="workspace-back" th:href="@{/}">← All boards</a>
+      <p class="workspace-eyebrow" th:text="${project.key}">PROJ</p>
+      <h1 th:text="${project.name}">Project name</h1>
     </div>
-  </div>
+    <a th:if="${projectRole == 'OWNER'}" class="btn btn-primary" th:href="@{/projects/{key}/issues/new(key=${project.key})}">New issue</a>
+  </header>
+  <nav class="workspace-tabs" aria-label="Project views">
+    <a aria-current="page" th:href="@{/projects/{key}/board(key=${project.key})}">Board</a>
+    <a th:href="@{/projects/{key}/issues(key=${project.key})}">List</a>
+    <a th:href="@{/projects/{key}/sprints(key=${project.key})}">Sprints</a>
+  </nav>
   <div id="board" th:fragment="board">
     <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}">Move rejected</div>
-    <form method="get" th:action="@{/projects/{key}/board(key=${project.key})}" class="mb-3 board-filter">
-      <label for="board-sprint">Sprint</label>
-      <select id="board-sprint" name="sprint" class="form-select" onchange="this.form.requestSubmit()">
-        <option value="" th:selected="${sprintFilter == ''}">All</option>
-        <option value="none" th:selected="${sprintFilter == 'none'}">No sprint</option>
-        <option th:each="sprint : ${sprints}" th:value="${sprint.id}" th:text="${sprint.name}" th:selected="${sprintFilter == sprint.id.toString()}">Sprint</option>
-      </select>
-      <button type="submit" class="btn btn-outline-secondary btn-sm">Filter</button>
-    </form>
-    <div class="row g-3">
-      <section class="col-md-4 board-lane" th:each="s : ${statuses}">
-        <h2 class="h6" th:text="${s.name() == 'TO_DO' ? 'To Do' : (s.name() == 'DONE' ? 'Done' : 'In Progress')} + ' (' + ${#lists.size(columns.get(s))} + ')'">To Do</h2>
-        <div class="board-column border rounded p-2 d-grid gap-2 align-content-start h-100"
-             th:attr="data-status=${s}">
-          <article class="card p-2" th:each="card : ${columns.get(s)}" th:attr="data-issue=${card.issue.number}">
-            <div><a th:href="@{/projects/{key}/issues/{n}(key=${project.key},n=${card.issue.number})}"
-                    th:text="${project.key} + '-' + ${card.issue.number}">PROJ-1</a>
-              <span th:text="${card.issue.title}">Title</span></div>
-            <div class="board-card-meta"><span class="badge" th:attr="data-value=${card.issue.type}" th:text="${card.issue.type}">TASK</span>
-              <span class="badge" th:attr="data-value=${card.issue.priority}" th:text="${card.issue.priority}">MEDIUM</span>
-              <small class="text-muted" th:text="${card.assignee}">Assignee</small></div>
-          </article>
-        </div>
-      </section>
+    <div class="board-toolbar">
+      <form method="get" th:action="@{/projects/{key}/board(key=${project.key})}" class="board-filter">
+        <label for="board-sprint">Sprint</label>
+        <select id="board-sprint" name="sprint" class="form-select" onchange="this.form.requestSubmit()">
+          <option value="" th:selected="${sprintFilter == ''}">All sprints</option>
+          <option value="none" th:selected="${sprintFilter == 'none'}">No sprint</option>
+          <option th:each="sprint : ${sprints}" th:value="${sprint.id}" th:text="${sprint.name}" th:selected="${sprintFilter == sprint.id.toString()}">Sprint</option>
+        </select>
+        <button type="submit" class="btn btn-outline-secondary btn-sm">Filter</button>
+      </form>
+      <p class="board-hint" th:text="${projectRole == 'OWNER'} ? 'Drag cards to update status · Open an issue for details' : 'Read-only board · Open an issue for details'">Board instructions</p>
+    </div>
+    <div class="board-viewport" role="region" aria-label="Kanban board: To Do, In Progress, Done" tabindex="0">
+      <div class="board-grid">
+        <section class="board-lane" th:each="s : ${statuses}" th:attr="data-lane=${s}">
+          <h2 class="board-lane-heading" th:text="${s.name() == 'TO_DO' ? 'To Do' : (s.name() == 'DONE' ? 'Done' : 'In Progress')} + ' (' + ${#lists.size(columns.get(s))} + ')'">To Do</h2>
+          <div class="board-column" th:attr="data-status=${s}">
+            <article class="card board-card" th:each="card : ${columns.get(s)}" th:attr="data-issue=${card.issue.number},data-movable=${projectRole == 'OWNER'}">
+              <a class="board-card-link" th:href="@{/projects/{key}/issues/{n}(key=${project.key},n=${card.issue.number})}">
+                <span class="board-card-key" th:text="${project.key} + '-' + ${card.issue.number}">PROJ-1</span>
+                <h3 th:text="${card.issue.title}">Title</h3>
+              </a>
+              <div class="board-card-meta"><span class="badge" th:attr="data-value=${card.issue.type}" th:text="${card.issue.type}">TASK</span>
+                <span class="badge" th:attr="data-value=${card.issue.priority}" th:text="${card.issue.priority}">MEDIUM</span></div>
+              <div class="board-card-assignee"><span class="text-muted">Assigned to</span><span th:text="${card.assignee}">Assignee</span></div>
+            </article>
+          </div>
+        </section>
+      </div>
     </div>
   </div>
   <script th:if="${projectRole == 'OWNER'}" th:inline="javascript">
@@ -45,7 +56,8 @@
       const init = root => root.querySelectorAll('.board-column').forEach(column => {
         if (column.sortable) return;
         column.sortable = new Sortable(column, {
-          group: 'board', animation: 150,
+          group: 'board', animation: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 150,
+          draggable: '.board-card', delay: 150, delayOnTouchOnly: true,
           onEnd: event => {
             event.item.remove();
             event.from.insertBefore(event.item, event.from.children[event.oldIndex] || null);
@@ -60,7 +72,7 @@
         });
       });
       init(document.body);
-      htmx.onLoad(init);
+      document.body.addEventListener('htmx:load', event => init(event.detail.elt));
     });
   </script>
 </main>

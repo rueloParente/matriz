@@ -13,6 +13,7 @@
 <body th:hx-headers='${_csrf != null} ? |{"X-CSRF-TOKEN":"${_csrf.token}"}| : null'>
 <nav class="navbar navbar-expand navbar-dark bg-dark px-3" aria-label="Main navigation">
   <a class="navbar-brand" href="/">Jira <span>clone</span></a>
+  <a class="nav-projects" th:if="${currentUser != null}" th:href="@{/}">Boards</a>
   <a class="nav-projects" th:if="${currentUser != null}" th:href="@{/projects}">Projects</a>
   <div id="navbar-slot" class="ms-auto d-flex align-items-center">
     <button id="theme-toggle" type="button" class="btn btn-outline-light btn-sm theme-toggle"

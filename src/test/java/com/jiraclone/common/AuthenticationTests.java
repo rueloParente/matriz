@@ -135,7 +135,7 @@ class AuthenticationTests extends AbstractIntegrationTest {
 			assertThat(result.getResponse().getContentAsString())
 					.contains("<!DOCTYPE html>", "Big ideas.", "Clear next steps.", "Sample board",
 							"href=\"/login\"", "href=\"/register\"", "href=\"#features\"", "id=\"features\"")
-					.doesNotContain("Dashboard for", "Alice Anderson", "action=\"/logout\"", "href=\"/projects\"");
+					.doesNotContain("Your boards", "Alice Anderson", "action=\"/logout\"", "href=\"/projects\"");
 			assertThat(result.getModelAndView().getModel()).doesNotContainKeys("projects", "currentUser");
 		}
 	}
@@ -155,7 +155,7 @@ class AuthenticationTests extends AbstractIntegrationTest {
 
 		mvc.perform(get("/").session(session))
 				.andExpect(status().isOk())
-				.andExpect(content().string(org.hamcrest.Matchers.containsString("Dashboard for Alice Anderson")))
+				.andExpect(content().string(org.hamcrest.Matchers.containsString("Workspace · Alice Anderson")))
 				.andExpect(result -> assertThat(result.getResponse().getContentAsString()).doesNotContain("Sample board"));
 	}
 

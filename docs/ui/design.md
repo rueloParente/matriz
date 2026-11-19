@@ -26,13 +26,33 @@ See [theme requirements](../../specs/theme-spec.md).
 The assignee picker reuses the shared select, label, and button styles in both
 the issue page and HTMX fragments. Its add controls wrap on narrow screens.
 
+### Board-first workspace
+
+- The signed-in home is **Your boards**: project entry cards with three labeled,
+  server-rendered status counts, a direct **Open board** link and a secondary
+  **Issue list** link. New users get a create-project call to action.
+- **Boards** in the global navigation returns to this overview. Existing project
+  routes and redirects are unchanged.
+- The board uses the available window width rather than the standard content
+  container. A compact project heading and Board / List / Sprints tabs keep
+  navigation above the work; New issue is shown only to owners.
+- Equal-height lanes have status dots and counts, with visible empty states.
+  Cards separate the issue key, linked title, type/priority badges and all assignee
+  names. The full key/title region links to the existing issue detail screen.
+- On narrow screens, the three lanes scroll horizontally in a labeled,
+  keyboard-focusable region. They do not stack vertically. Colors use the shared
+  light/dark tokens, and drag animation respects reduced motion.
+- Owners see drag guidance; members see a read-only hint and no drag affordance.
+  Sprint filtering remains a native GET form with an explicit Filter button.
+  Status changes without dragging remain available on issue detail for owners.
+
 ## 2. Screens
 
 | Screen | URL | Spec | MR |
 | --- | --- | --- | --- |
 | Login, register | `/login`, `/register` | AUTH | 1, — |
 | Public landing page (guests): feature overview, static sample board, login and sign-up links | `/` | AUTH-22 | — |
-| Dashboard (my projects and issues) | `/` | ACC | — |
+| Your boards (accessible projects and status counts) | `/` | ACC | — |
 | Projects list (search, paging) and create | `/projects`, `/projects/new` | PRJ, ACC | 2, — |
 | Edit or delete project (owner only) | `/projects/{key}/edit`, `/projects/{key}/delete` | ACC | — |
 | Issue list (filters, search, paging) | `/projects/{key}/issues` | ISS | 3–4 |
@@ -41,7 +61,7 @@ the issue page and HTMX fragments. Its add controls wrap on narrow screens.
 | **Kanban board** (wireframed) | `/projects/{key}/board` | BRD, SPR | 6, 10 |
 | Sprints | `/projects/{key}/sprints` | SPR | 9 |
 
-Guests see a responsive landing page at `/`, with a feature overview, a clearly labeled static sample board, and ordinary links to login and registration. Signed-in users see their existing dashboard at the same URL. The shared navbar shows login/sign-up links for guests and project navigation, the user's name, and CSRF-protected logout for signed-in users. The landing page needs no custom JavaScript.
+Guests see a responsive landing page at `/`, with a feature overview, a clearly labeled static sample board, and ordinary links to login and registration. Signed-in users see their board directory at the same URL. The shared navbar shows login/sign-up links for guests and board/project navigation, the user's name, and CSRF-protected logout for signed-in users. The landing page needs no custom JavaScript.
 
 ## 3. Navigation map
 

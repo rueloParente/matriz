@@ -5,8 +5,8 @@
   <div><h1 class="h3 m-0" th:text="${project.key} + ' · ' + ${project.name}">PROJ · Name</h1>
     <p th:if="${!#strings.isEmpty(project.description)}" th:text="${project.description}">Description</p></div>
   <div>
-    <a class="btn btn-outline-secondary" th:href="@{/projects/{key}/issues(key=${project.key})}">List</a>
     <a class="btn btn-outline-secondary" th:href="@{/projects/{key}/board(key=${project.key})}">Board</a>
+    <a class="btn btn-outline-secondary" th:href="@{/projects/{key}/issues(key=${project.key})}">List</a>
     <a th:if="${projectRole == 'OWNER'}" class="btn btn-outline-secondary" th:href="@{/projects/{key}/edit(key=${project.key})}">Edit project</a>
     <a th:if="${projectRole == 'OWNER'}" class="btn btn-outline-danger" th:href="@{/projects/{key}/delete(key=${project.key})}">Delete project</a>
     <a class="btn btn-outline-secondary" th:href="@{/projects/{key}/sprints(key=${project.key})}">Sprints</a>

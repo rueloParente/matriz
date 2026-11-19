@@ -41,9 +41,10 @@ class DashboardTests extends AbstractIntegrationTest {
 	}
 
 	private void counts(String key, long todo, long inProgress, long done) throws Exception {
-		assertThat(dashboard("alice")).containsPattern("(?s)href=\"/projects/" + key
-				+ "\"[^>]*>[^<]*</a></td>\\s*<td>" + todo + "</td>\\s*<td>" + inProgress
-				+ "</td>\\s*<td>" + done + "</td>");
+		assertThat(dashboard("alice")).containsPattern("(?s)<article[^>]*data-project=\"" + key
+				+ "\"[^>]*>.*?data-status=\"TO_DO\"[^>]*><dt>To Do</dt><dd>" + todo
+				+ "</dd>.*?data-status=\"IN_PROGRESS\"[^>]*><dt>In Progress</dt><dd>" + inProgress
+				+ "</dd>.*?data-status=\"DONE\"[^>]*><dt>Done</dt><dd>" + done + "</dd>");
 	}
 
 	@Test
@@ -80,12 +81,19 @@ class DashboardTests extends AbstractIntegrationTest {
 		long alice = jdbc.queryForObject("select id from app_user where username='alice'", Long.class);
 		jdbc.update("insert into issue_assignee(issue_id,user_id) select i.id, ? from issue i "
 				+ "join project p on p.id=i.project_id where p.key=?", alice, member);
-		assertThat(dashboard("alice")).contains("Dashboard for Alice Anderson", "/projects/" + owned,
-				"/projects/" + member).doesNotContain(hidden);
+		assertThat(dashboard("alice")).contains("Workspace · Alice Anderson", "Your boards",
+				"href=\"/projects/" + owned + "/board\"", "href=\"/projects/" + member + "/board\"",
+				"href=\"/projects/" + member + "/issues\"").doesNotContain(hidden);
+		mvc.perform(get("/projects/" + owned + "/board").with(user("alice"))).andExpect(status().isOk());
+		mvc.perform(get("/projects/" + member + "/board").with(user("alice"))).andExpect(status().isOk())
+				.andExpect(result -> assertThat(result.getResponse().getContentAsString())
+						.contains("Read-only board", "data-movable=\"false\"")
+						.doesNotContain("New issue", "new Sortable", "Drag cards"));
 		String username = "empty" + UUID.randomUUID().toString().substring(0, 8);
 		jdbc.update("insert into app_user(username,display_name,password_hash) values (?, ?, ?)",
 				username, "Empty User", "not-used");
-		assertThat(dashboard(username)).contains("Dashboard for Empty User", "No projects found.")
+		assertThat(dashboard(username)).contains("Workspace · Empty User", "No projects found.",
+				"Create your first project", "href=\"/projects/new\"")
 				.doesNotContain(owned, member, hidden);
 		assertThat(mvc.perform(get("/projects").with(user(username))).andReturn().getResponse().getContentAsString())
 				.contains("No projects found.").doesNotContain(owned, member, hidden);

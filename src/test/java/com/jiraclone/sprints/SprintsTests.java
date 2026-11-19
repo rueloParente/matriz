@@ -246,19 +246,19 @@ class SprintsTests extends AbstractIntegrationTest {
 				.contains("In sprint", "No sprint");
 		assertThat(mvc.perform(get(board).with(user("alice")).param("sprint", String.valueOf(selected)))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString())
-				.contains("<span>In sprint</span>", "selected=\"selected\"").doesNotContain("<span>No sprint</span>");
+				.contains("<h3>In sprint</h3>", "selected=\"selected\"").doesNotContain("<h3>No sprint</h3>");
 		assertThat(mvc.perform(get(board).with(user("alice")).param("sprint", "none"))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString())
-				.contains("<span>No sprint</span>").doesNotContain("<span>In sprint</span>");
+				.contains("<h3>No sprint</h3>").doesNotContain("<h3>In sprint</h3>");
 		mvc.perform(get(board).with(user("alice")).param("sprint", "nonsense"))
 				.andExpect(status().isUnprocessableEntity())
-				.andExpect(result -> assertThat(result.getResponse().getContentAsString()).doesNotContain("<span>No sprint</span>", "<span>In sprint</span>"));
+				.andExpect(result -> assertThat(result.getResponse().getContentAsString()).doesNotContain("<h3>No sprint</h3>", "<h3>In sprint</h3>"));
 		mvc.perform(get(board).with(user("alice")).param("sprint", String.valueOf(foreign)))
 				.andExpect(status().isNotFound());
 		mvc.perform(post(board + "/move").with(user("alice")).with(csrf()).header("HX-Request", "true")
 				.param("issue", "1").param("status", "DONE").param("sprint", String.valueOf(selected)))
 				.andExpect(status().isOk()).andExpect(result -> assertThat(result.getResponse().getContentAsString())
-						.contains("<span>In sprint</span>", "selected=\"selected\"").doesNotContain("<span>No sprint</span>", "<html"));
+						.contains("<h3>In sprint</h3>", "selected=\"selected\"").doesNotContain("<h3>No sprint</h3>", "<html"));
 	}
 
 	@Test

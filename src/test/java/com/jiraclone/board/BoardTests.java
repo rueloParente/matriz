@@ -83,6 +83,10 @@ class BoardTests extends AbstractIntegrationTest {
 		String html = mvc.perform(get(path(key)).with(user("alice"))).andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
 		assertThat(html).contains("<html", "To Do (2)", "In Progress (1)", "Done (0)",
+				"class=\"board-workspace\"", "class=\"board-grid\"", "class=\"board-card-link\"",
+				"aria-label=\"Kanban board: To Do, In Progress, Done\" tabindex=\"0\"",
+				"aria-current=\"page\"", "Drag cards", "data-movable=\"true\"",
+				"/projects/" + key + "/sprints",
 				"First", "Third", "BUG", "HIGH", "Bob Brown", "Carol Clark", "Unassigned", "/projects/" + key + "/issues/1",
 				"&lt;script&gt;alert(1)&lt;/script&gt;")
 				.doesNotContain("Foreign", "<script>alert(1)</script>")

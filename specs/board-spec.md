@@ -27,6 +27,7 @@ The board shows one project's issues as cards in three columns, one per status: 
 - **Failed move** — When a move is rejected the board is re-rendered from stored data, so the card visibly returns to its original column.
 - **Same-column drop** — Dropping a card on its own column is a no-op: no change, no history entry.
 - **Precedence** — Unknown project returns `404` before the issue or status are checked; unknown issue `404` before invalid status `422`.
+- **Workspace presentation** — The board uses the available page width, with three equal lanes, visible counts, and distinct issue-key, title, metadata and assignee regions. On narrow screens the lanes scroll horizontally inside a labeled, keyboard-focusable region rather than stacking into a long page. Project navigation keeps Board, List and Sprints together; owner-only creation remains prominent. Members see a read-only hint rather than drag instructions.
 
 ## Requirements
 

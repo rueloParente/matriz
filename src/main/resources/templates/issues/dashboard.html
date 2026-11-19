@@ -1,22 +1,37 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/base :: layout(~{::title}, ~{::main})}">
-<head><title>Dashboard</title></head>
+<head><title>Your boards</title></head>
 <body>
 <main class="container py-4">
-  <h1 class="h3" th:text="'Dashboard for ' + ${currentUser.displayName}">Dashboard</h1>
-  <p th:if="${#lists.isEmpty(projects)}" class="empty-state">No projects found.</p>
-  <table th:unless="${#lists.isEmpty(projects)}" class="table">
-    <thead><tr><th>Project</th><th>TO_DO</th><th>IN_PROGRESS</th><th>DONE</th></tr></thead>
-    <tbody>
-      <tr th:each="summary : ${projects}">
-        <td><a th:href="@{/projects/{key}(key=${summary.project.key})}" th:text="${summary.project.key} + ' — ' + ${summary.project.name}">Project</a></td>
-        <td th:text="${summary.counts[T(com.jiraclone.issues.IssueStatus).TO_DO]}">0</td>
-        <td th:text="${summary.counts[T(com.jiraclone.issues.IssueStatus).IN_PROGRESS]}">0</td>
-        <td th:text="${summary.counts[T(com.jiraclone.issues.IssueStatus).DONE]}">0</td>
-      </tr>
-    </tbody>
-  </table>
+  <header class="workspace-heading">
+    <div>
+      <p class="workspace-eyebrow" th:text="'Workspace · ' + ${currentUser.displayName}">Workspace</p>
+      <h1>Your boards</h1>
+      <p class="text-muted">Pick a project. See what’s moving. Keep work flowing.</p>
+    </div>
+    <a class="btn btn-primary" th:href="@{/projects/new}">New project</a>
+  </header>
+  <div th:if="${#lists.isEmpty(projects)}" class="empty-state">
+    <h2>A clear board. A fresh start.</h2>
+    <p>No projects found.</p>
+    <a class="btn btn-primary" th:href="@{/projects/new}">Create your first project</a>
+  </div>
+  <div th:unless="${#lists.isEmpty(projects)}" class="board-directory">
+    <article class="board-entry" th:each="summary : ${projects}" th:attr="data-project=${summary.project.key}">
+      <span class="project-key" th:text="${summary.project.key}">PROJ</span>
+      <h2><a th:href="@{/projects/{key}/board(key=${summary.project.key})}" th:text="${summary.project.name}">Project</a></h2>
+      <dl class="board-entry-counts">
+        <div data-status="TO_DO"><dt>To Do</dt><dd th:text="${summary.counts[T(com.jiraclone.issues.IssueStatus).TO_DO]}">0</dd></div>
+        <div data-status="IN_PROGRESS"><dt>In Progress</dt><dd th:text="${summary.counts[T(com.jiraclone.issues.IssueStatus).IN_PROGRESS]}">0</dd></div>
+        <div data-status="DONE"><dt>Done</dt><dd th:text="${summary.counts[T(com.jiraclone.issues.IssueStatus).DONE]}">0</dd></div>
+      </dl>
+      <div class="board-entry-actions">
+        <a class="board-open" th:href="@{/projects/{key}/board(key=${summary.project.key})}">Open board <span aria-hidden="true">↗</span></a>
+        <a th:href="@{/projects/{key}/issues(key=${summary.project.key})}">Issue list</a>
+      </div>
+    </article>
+  </div>
 </main>
 </body>
 </html>
