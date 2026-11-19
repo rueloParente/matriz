@@ -60,6 +60,35 @@ docker build -t jira-clone .
 docker compose --profile app up --build   # app + Postgres on http://localhost:8080
 ```
 
+### Production with remote PostgreSQL
+
+Use `docker-compose.prd.yml` **on its own**, not as an override of the development
+file. It runs only the app, with no database service or database volume.
+
+Supply `DB_URL`, `DB_USERNAME` and `DB_PASSWORD` through the deployment environment
+or a protected `.env.prd` file (ignored by Git). All three are required; no local
+database credentials are used as fallbacks. Use a PostgreSQL JDBC URL such as
+`jdbc:postgresql://db.example.com:5432/jiraclone?sslmode=verify-full` and configure
+the trusted CA as required by your database provider.
+
+After approving the deployment and preparing the remote schema:
+
+```sh
+docker compose --env-file .env.prd -f docker-compose.prd.yml up -d --build
+```
+
+The app binds to `127.0.0.1:8080` on the host (set `APP_PORT` to change the port).
+Put an HTTPS reverse proxy in front of it; the Compose file does not expose it
+publicly or provision TLS.
+
+Automatic Flyway migrations are disabled in this file. Apply reviewed migrations
+through your approved database migration process before starting the app;
+Hibernate still validates the schema. **The bundled `V2__seed_users.sql` migration
+creates demo accounts with known passwords, including on a remote database.**
+Remove or secure those accounts through an approved database operation before
+allowing production access. Do not enable automatic migrations against production
+without reviewing this seed migration.
+
 ## Project layout
 
 ```text
