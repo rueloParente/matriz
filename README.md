@@ -89,6 +89,14 @@ Remove or secure those accounts through an approved database operation before
 allowing production access. Do not enable automatic migrations against production
 without reviewing this seed migration.
 
+## Observability
+
+[`observability/`](observability/README.md) contains a standalone Docker Compose
+stack with Grafana, Prometheus and a provisioned application/JVM dashboard.
+It targets `homelab-server-1:8085`. Enable the application's `observability`
+profile and configure the dedicated scrape credential before starting the stack;
+see the guide for secrets, private connectivity and verification.
+
 ## Project layout
 
 ```text

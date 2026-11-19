@@ -24,6 +24,17 @@ flowchart LR
 | Database | PostgreSQL, schema owned by Flyway, `ddl-auto=validate` |
 | Runtime | Local: `docker compose` for Postgres, app run with Maven or as a container (`Dockerfile`, compose profile `app`) |
 | Tests | JUnit Jupiter, AssertJ, MockMvc, Testcontainers (no H2), `ApplicationModules.verify()` |
+| Metrics | Opt-in `observability` profile, Micrometer Prometheus registry, isolated stateless Basic-auth scrape endpoint; standalone Grafana/Prometheus Compose stack in `observability/` targeting `homelab-server-1:8085` |
+
+Monitoring authentication lives in `common/ObservabilityConfig`, separate from
+browser authentication and the identity database. Only dedicated monitoring
+credentials can read `/actuator/prometheus`; sessions do not grant access.
+The profile requires nonblank credentials and adds the bounded
+`application=matriz` metric tag. Other Actuator routes are denied except the
+existing public health route. The monitoring stack publishes only loopback
+Grafana; private connectivity/TLS considerations are documented in
+[`observability/README.md`](../observability/README.md). Logs, tracing and alerting
+are not configured by this stack.
 
 ## 2. Modules
 

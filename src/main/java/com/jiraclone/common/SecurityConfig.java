@@ -29,6 +29,7 @@ class SecurityConfig {
 		http.authorizeHttpRequests(auth -> auth
 						.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
 						.requestMatchers("/", "/login", "/register", "/error", "/actuator/health/**").permitAll()
+						.requestMatchers("/actuator/**").denyAll()
 						.anyRequest().authenticated())
 				.requestCache(cache -> cache.requestCache(requestCache))
 				.exceptionHandling(ex -> ex.authenticationEntryPoint(new HtmxAuthenticationEntryPoint()))

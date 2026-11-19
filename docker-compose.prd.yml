@@ -6,6 +6,9 @@ services:
       DB_URL: ${DB_URL:?Set DB_URL to the remote PostgreSQL JDBC URL}
       DB_USERNAME: ${DB_USERNAME:?Set DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-}
+      METRICS_USERNAME: ${METRICS_USERNAME:-prometheus}
+      METRICS_PASSWORD: ${METRICS_PASSWORD:-}
       # Apply reviewed migrations separately; bundled migrations include demo users.
       SPRING_FLYWAY_ENABLED: "false"
     ports:

@@ -29,6 +29,24 @@ tags:
     description: Accessible projects and owner-only lifecycle.
 
 paths:
+  /actuator/prometheus:
+    get:
+      summary: Prometheus scrape endpoint (observability profile only)
+      description: Dedicated stateless monitoring credentials required; browser sessions and application users do not grant access. Use only over a trusted private network/VPN or TLS.
+      security:
+        - metricsBasic: []
+      responses:
+        '200':
+          description: Framework application, JVM and database pool metrics.
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Missing or invalid monitoring credentials; no browser redirect.
+        '403':
+          description: Endpoint blocked when the observability profile is disabled.
+
   /:
     get:
       tags: [Projects]
@@ -413,6 +431,9 @@ paths:
 
 components:
   securitySchemes:
+    metricsBasic:
+      type: http
+      scheme: basic
     sessionCookie:
       type: apiKey
       in: cookie
