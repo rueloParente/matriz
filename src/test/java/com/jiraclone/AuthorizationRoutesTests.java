@@ -29,7 +29,6 @@ class AuthorizationRoutesTests extends AbstractIntegrationTest {
 
 	static Stream<Route> routes() {
 		return Stream.of(
-				new Route("GET", "/"),
 				new Route("GET", "/projects"),
 				new Route("GET", "/projects/new"),
 				new Route("POST", "/projects"),
@@ -90,7 +89,7 @@ class AuthorizationRoutesTests extends AbstractIntegrationTest {
 				mvc.perform(anonymous).andExpect(status().isFound()).andExpect(redirectedUrl("/login"));
 			}
 		}
-		if (!route.path().contains("{key}")) return; // Dashboard, list and creation are not scoped to a project.
+		if (!route.path().contains("{key}")) return; // List and creation are not scoped to a project.
 		List<Integer> before = counts();
 		for (boolean hx : List.of(false, true)) {
 			MockHttpServletRequestBuilder outsider = request(route.method(), path).with(user("bob"))

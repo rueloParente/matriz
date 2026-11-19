@@ -31,7 +31,7 @@ Log in as a seeded user or register at `/register`.
 | --- | --- |
 | `alice`, `bob`, `carol` | `password` |
 
-Flyway seeds these users for local development only. Usernames are case-insensitive. Every page except `/login` and `/register` requires a login.
+Flyway seeds these users for local development only. Usernames are case-insensitive. `/` shows a public landing page for guests and the dashboard for signed-in users. Business pages require a login; `/login` and `/register` are public.
 
 Alternatively, run `TestJiraCloneApplication` (under `src/test`) from your IDE. It starts the app against a throwaway Testcontainers PostgreSQL, so you do not need compose.
 

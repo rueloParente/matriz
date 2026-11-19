@@ -21,6 +21,7 @@ This document describes the screens of the Jira clone and records the low-fideli
 | Screen | URL | Spec | MR |
 | --- | --- | --- | --- |
 | Login, register | `/login`, `/register` | AUTH | 1, — |
+| Public landing page (guests): feature overview, static sample board, login and sign-up links | `/` | AUTH-22 | — |
 | Dashboard (my projects and issues) | `/` | ACC | — |
 | Projects list (search, paging) and create | `/projects`, `/projects/new` | PRJ, ACC | 2, — |
 | Edit or delete project (owner only) | `/projects/{key}/edit`, `/projects/{key}/delete` | ACC | — |
@@ -30,10 +31,16 @@ This document describes the screens of the Jira clone and records the low-fideli
 | **Kanban board** (wireframed) | `/projects/{key}/board` | BRD, SPR | 6, 10 |
 | Sprints | `/projects/{key}/sprints` | SPR | 9 |
 
+Guests see a responsive landing page at `/`, with a feature overview, a clearly labeled static sample board, and ordinary links to login and registration. Signed-in users see their existing dashboard at the same URL. The shared navbar shows login/sign-up links for guests and project navigation, the user's name, and CSRF-protected logout for signed-in users. The landing page needs no custom JavaScript.
+
 ## 3. Navigation map
 
 ```mermaid
 flowchart LR
+    landing[Public landing page] --> login
+    landing --> register[Register]
+    register -->|account created| dashboard[Dashboard]
+    login -->|no saved destination| dashboard
     login[Login] -->|valid login| projects[Projects list]
     projects -->|New project| newProject[Create project]
     newProject -->|created| issues

@@ -2,7 +2,7 @@
 
 ## Overview
 
-The application is a server-rendered web app. Every page and every htmx fragment endpoint, except the login page, the registration page and static assets, requires an authenticated session. Anyone can register an account with only a username and a password (entered twice); there is no email address, email verification or two-factor step. Seeded users also exist. There is no password reset or user management screen. Authentication uses a form login (username and password) and a server-side session cookie; a successful registration signs the new user in immediately. All state-changing requests require a valid CSRF token.
+The application is a server-rendered web app. Business pages and htmx fragments require an authenticated session; the homepage, login page, registration page and static assets are public. Anyone can register an account with only a username and a password (entered twice); there is no email address, email verification or two-factor step. Seeded users also exist. There is no password reset or user management screen. Authentication uses a form login (username and password) and a server-side session cookie; a successful registration signs the new user in immediately. All state-changing requests require a valid CSRF token.
 
 ## HTTP API
 
@@ -13,13 +13,13 @@ The application is a server-rendered web app. Every page and every htmx fragment
 | `POST` | `/register` | none | Creates an account from `username`, `password` and `confirmPassword` form fields and signs the user in |
 | `POST` | `/login` | none | Authenticates with `username` and `password` form fields |
 | `POST` | `/logout` | required | Ends the session |
-| `GET` | `/` | required | Redirects to `/projects` |
+| `GET` | `/` | none | Public landing page for guests; existing dashboard for authenticated users |
 
 ## Response Codes
 
 | Code | Meaning |
 | --- | --- |
-| `200 OK` | Login or registration form rendered |
+| `200 OK` | Landing page, authenticated dashboard, login or registration form rendered |
 | `302 Found` | Successful login redirects to the originally requested page, or `/` if none; unauthenticated browser request redirects to `/login`; successful registration redirects to `/`; logout redirects to `/login?logout` |
 | `422 Unprocessable Entity` | Registration validation failure; the form is re-rendered with errors and the entered username preserved (the passwords are never echoed) |
 | `401 Unauthorized` | Unauthenticated htmx request (`HX-Request: true`); the response carries `HX-Redirect: /login` |
@@ -46,8 +46,8 @@ The application is a server-rendered web app. Every page and every htmx fragment
 | --- | --- | --- |
 | `AUTH-1` | Basic | Valid credentials create a session and redirect to the originally requested page, or `/` if none |
 | `AUTH-2` | Validation | Wrong password and unknown username both redirect to `/login?error` with the same message, and no session is created |
-| `AUTH-3` | Authentication | An unauthenticated browser request to any page other than `/login` returns `302` to `/login`; no page content is returned |
-| `AUTH-4` | Authentication | An unauthenticated htmx request returns `401` with `HX-Redirect: /login`; no fragment content is returned |
+| `AUTH-3` | Authentication | An unauthenticated browser request to a protected page returns `302` to `/login`; no page content is returned |
+| `AUTH-4` | Authentication | An unauthenticated htmx request to a protected endpoint returns `401` with `HX-Redirect: /login`; no fragment content is returned |
 | `AUTH-5` | Basic | `POST /logout` invalidates the session; a later request with the old cookie is treated as unauthenticated |
 | `AUTH-6` | Authentication | A state-changing request without a valid CSRF token returns `403` and changes no state |
 | `AUTH-7` | Persistence | Seeded users can log in after an application restart; stored passwords are not the plain text password |
@@ -65,6 +65,8 @@ The application is a server-rendered web app. Every page and every htmx fragment
 | `AUTH-19` | Basic | A registered user can log out and log in again with the same username in any casing (AUTH-5, AUTH-8) |
 | `AUTH-20` | Basic | An authenticated request to `/register` or `/login` returns `302` to `/` |
 | `AUTH-21` | Validation | A username with surrounding whitespace is trimmed and stored trimmed; a username that is blank after trimming returns `422` |
+| `AUTH-22` | Basic | A guest `GET /` returns a complete landing page with login and registration links, a feature overview and a clearly labeled static sample board; no private project or user data is exposed. Direct and `HX-Request: true` requests work without JavaScript. |
+| `AUTH-23` | Compatibility | An authenticated `GET /` still renders the current user's dashboard; login and registration destinations remain unchanged. |
 
 ## Out of Scope
 

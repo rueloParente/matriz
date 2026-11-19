@@ -122,12 +122,41 @@ class AuthenticationTests extends AbstractIntegrationTest {
 	}
 
 	@Test
+	void guestHomepageRendersLandingForBrowserAndHtmxRequests() throws Exception {
+		for (boolean htmx : new boolean[] {false, true}) {
+			var request = get("/");
+			if (htmx) {
+				request.header("HX-Request", "true");
+			}
+			MvcResult result = mvc.perform(request)
+					.andExpect(status().isOk())
+					.andExpect(header().doesNotExist("HX-Redirect"))
+					.andReturn();
+			assertThat(result.getResponse().getContentAsString())
+					.contains("<!DOCTYPE html>", "Big ideas.", "Clear next steps.", "Sample board",
+							"href=\"/login\"", "href=\"/register\"", "href=\"#features\"", "id=\"features\"")
+					.doesNotContain("Dashboard for", "Alice Anderson", "action=\"/logout\"", "href=\"/projects\"");
+			assertThat(result.getModelAndView().getModel()).doesNotContainKeys("projects", "currentUser");
+		}
+	}
+
+	@Test
+	void landingLinksLoadCompleteLoginAndRegistrationPages() throws Exception {
+		mvc.perform(get("/login")).andExpect(status().isOk())
+				.andExpect(content().string(org.hamcrest.Matchers.containsString("name=\"username\"")));
+		mvc.perform(get("/register")).andExpect(status().isOk())
+				.andExpect(content().string(org.hamcrest.Matchers.containsString("name=\"confirmPassword\"")));
+		mvc.perform(get("/css/app.css")).andExpect(status().isOk());
+	}
+
+	@Test
 	void rootRendersDashboard() throws Exception {
 		MockHttpSession session = login("alice", "password");
 
 		mvc.perform(get("/").session(session))
 				.andExpect(status().isOk())
-				.andExpect(content().string(org.hamcrest.Matchers.containsString("Dashboard for Alice Anderson")));
+				.andExpect(content().string(org.hamcrest.Matchers.containsString("Dashboard for Alice Anderson")))
+				.andExpect(result -> assertThat(result.getResponse().getContentAsString()).doesNotContain("Sample board"));
 	}
 
 	@Test

@@ -32,14 +32,11 @@ paths:
   /:
     get:
       tags: [Projects]
-      summary: Dashboard for the current user, with accessible projects and per-status issue counts
+      summary: Public landing page for guests, dashboard with accessible projects and issue counts for signed-in users
+      security: []
       responses:
         '200':
-          description: HTML dashboard (including empty state when no projects are accessible).
-        '302':
-          $ref: '#/components/responses/LoginRedirect'
-        '401':
-          $ref: '#/components/responses/HtmxUnauthenticated'
+          description: Complete HTML landing page with a static sample board for guests, or the current user's dashboard (including empty state when no projects are accessible).
 
   /projects:
     get:

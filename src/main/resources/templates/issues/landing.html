@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::main})}">
+<head>
+  <title>Jira clone — Make room for progress</title>
+</head>
+<body>
+<main class="container landing">
+  <section class="landing-hero" aria-labelledby="landing-title">
+    <div class="landing-intro">
+      <p class="landing-eyebrow">LESS SCATTER. MORE MOMENTUM.</p>
+      <h1 id="landing-title">Big ideas.<br>Clear next steps.</h1>
+      <p class="landing-lead">Bring your projects, issues, and sprints into one place. Know what needs doing, who’s on it, and what’s moving forward.</p>
+      <div class="landing-actions">
+        <a class="btn btn-primary" th:href="@{/register}">Create your account <span aria-hidden="true">→</span></a>
+        <a class="btn btn-outline-secondary" href="#features">Explore the features</a>
+      </div>
+      <p class="landing-note">Just a username and password. No email required.</p>
+    </div>
+    <figure class="landing-preview" aria-labelledby="preview-title">
+      <figcaption class="landing-preview-header">
+        <div><span class="landing-eyebrow">A LITTLE CLARITY GOES A LONG WAY</span><h2 id="preview-title">Your next launch</h2></div>
+        <span class="badge">Sample board</span>
+      </figcaption>
+      <div class="landing-board">
+        <section class="landing-lane" aria-labelledby="sample-todo">
+          <h3 id="sample-todo"><span class="landing-dot"></span>To Do <span>1</span></h3>
+          <div class="landing-card"><small>DEMO-3</small><p>Map out the next big idea</p><span class="badge" data-value="STORY">Story</span></div>
+        </section>
+        <section class="landing-lane" aria-labelledby="sample-progress">
+          <h3 id="sample-progress"><span class="landing-dot progress"></span>In Progress <span>1</span></h3>
+          <div class="landing-card"><small>DEMO-2</small><p>Build something that matters</p><span class="badge" data-value="TASK">Task</span></div>
+        </section>
+        <section class="landing-lane" aria-labelledby="sample-done">
+          <h3 id="sample-done"><span class="landing-dot done"></span>Done <span>1</span></h3>
+          <div class="landing-card"><small>DEMO-1</small><p>Get everyone on the same page</p><span class="badge" data-value="DONE">Done</span></div>
+        </section>
+      </div>
+      <p class="landing-preview-note">From the first idea to the final checkmark.</p>
+    </figure>
+  </section>
+
+  <section id="features" class="landing-features" aria-labelledby="features-title">
+    <p class="landing-eyebrow">THE ESSENTIALS, ALL TOGETHER</p>
+    <h2 id="features-title">A home for the work ahead.</h2>
+    <div class="landing-feature-grid">
+      <article><span class="landing-feature-number" aria-hidden="true">01 / ORGANIZE</span><h3>Give every idea a place</h3><p>Create projects, break work into issues, and keep priorities and assignees clear.</p></article>
+      <article><span class="landing-feature-number" aria-hidden="true">02 / MOVE</span><h3>See progress happen</h3><p>Plan your sprints and move issues from To Do to Done on a visual Kanban board.</p></article>
+      <article><span class="landing-feature-number" aria-hidden="true">03 / CONNECT</span><h3>Keep the context close</h3><p>Discuss the details in comments and follow the history of every issue change.</p></article>
+    </div>
+  </section>
+
+  <section class="landing-cta" aria-labelledby="cta-title">
+    <div><h2 id="cta-title">Your next project starts here.</h2><p>Turn “we should” into work in motion.</p></div>
+    <a class="btn btn-primary" th:href="@{/register}">Get started <span aria-hidden="true">→</span></a>
+  </section>
+  <footer class="landing-footer"><span>Jira clone · A little structure. A lot of possibility.</span><a th:href="@{/login}">Already have an account? Log in</a></footer>
+</main>
+</body>
+</html>

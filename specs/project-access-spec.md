@@ -70,7 +70,7 @@ Mutations are `POST` so they work from native forms; htmx enhances them and swap
 | `ACC-5` | Access | Changing the project key, issue number or user id in a direct request never returns or changes data of a project the caller cannot access |
 | `ACC-6` | Access | A new comment's author and timestamp are set from the session and the server clock; any submitted author or date value is ignored |
 | `ACC-7` | Access | The owner of a new project is the authenticated creator; a submitted owner value is ignored |
-| `ACC-8` | Authentication | Every endpoint in this spec returns the unauthenticated responses of the authentication spec and discloses no data |
+| `ACC-8` | Authentication | Every protected endpoint in this spec returns the unauthenticated responses of the authentication spec and discloses no data. `GET /` instead renders the public landing page for guests (AUTH-22), without project data. |
 | `ACC-9` | Access | A user who becomes the assignee of an issue gains access to its project; after the last assignment is removed or the issue is deleted they receive `404` for that project |
 | `PRJ-E1` | Project edit | The owner can update `name` and `description`; the response redirects to the project and the stored values are shown afterwards |
 | `PRJ-E2` | Validation | A name shorter than 3 or longer than 100 characters after trimming, or a whitespace-only name, returns `422`; the entered values are preserved and nothing changes |

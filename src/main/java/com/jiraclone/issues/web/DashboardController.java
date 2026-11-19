@@ -24,7 +24,11 @@ class DashboardController {
 
 	@GetMapping("/")
 	String dashboard(Model model) {
-		long userId = identity.currentUser().orElseThrow().id();
+		var currentUser = identity.currentUser();
+		if (currentUser.isEmpty()) {
+			return "issues/landing";
+		}
+		long userId = currentUser.orElseThrow().id();
 		List<ProjectSummary> summaries = projects.listAccessible(userId).stream()
 				.map(project -> new ProjectSummary(project, issues.countsByStatus(project.id()))).toList();
 		model.addAttribute("projects", summaries);
