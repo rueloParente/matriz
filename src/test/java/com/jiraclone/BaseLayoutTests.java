@@ -24,7 +24,7 @@ class BaseLayoutTests extends AbstractIntegrationTest {
 						org.hamcrest.Matchers.containsString("src=\"/js/sortable.min.js\""),
 						org.hamcrest.Matchers.containsString("src=\"/js/theme.js\""),
 						org.hamcrest.Matchers.containsString("id=\"theme-toggle\""),
-						org.hamcrest.Matchers.containsString("aria-pressed=\"false\""),
+						org.hamcrest.Matchers.containsString("aria-label=\"Switch to dark mode\""),
 						org.hamcrest.Matchers.containsString("id=\"navbar-slot\""),
 						org.hamcrest.Matchers.containsString("<title>Log in</title>"))));
 	}
@@ -43,11 +43,13 @@ class BaseLayoutTests extends AbstractIntegrationTest {
 		for (String path : new String[] { "/", "/login", "/register" }) {
 			var html = mvc.perform(get(path)).andExpect(status().isOk())
 					.andReturn().getResponse().getContentAsString();
-			assertThat(html).contains("id=\"theme-toggle\"", "aria-pressed=\"false\"");
+			assertThat(html).contains("id=\"theme-toggle\"", "aria-label=\"Switch to dark mode\"");
+			assertThat(html.indexOf("id=\"theme-toggle\"")).isGreaterThan(html.indexOf("href=\"/register\""));
 			assertThat(html.indexOf("src=\"/js/theme.js\"")).isLessThan(html.indexOf("href=\"/css/app.css\""));
 		}
 		var html = mvc.perform(get("/").with(user("alice"))).andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
-		assertThat(html).contains("id=\"theme-toggle\"", "aria-pressed=\"false\"");
+		assertThat(html).contains("id=\"theme-toggle\"", "aria-label=\"Switch to dark mode\"");
+		assertThat(html.indexOf("id=\"theme-toggle\"")).isGreaterThan(html.indexOf("action=\"/logout\""));
 	}
 }

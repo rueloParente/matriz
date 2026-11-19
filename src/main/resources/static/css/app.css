@@ -77,8 +77,8 @@ h1 { font-size: 1.75rem; } h2 { font-size: 1.35rem; } h3 { font-size: 1.15rem; }
 .navbar-text { color: #d8e2f5; }
 .navbar .btn-outline-light { color: #fff; border-color: #9babca; }
 .navbar .btn-outline-light:hover { background: #324563; }
-.theme-toggle { margin-right: .75rem; }
-.navbar .theme-toggle[aria-pressed="true"] { background: #324563; border-color: #9ab6fb; }
+#navbar-slot { gap: .75rem; }
+.navbar .theme-toggle { margin-left: .25rem; border-color: transparent; color: #c4d2ec; }
 [hidden] { display: none !important; }
 
 main { padding-bottom: 4rem !important; }

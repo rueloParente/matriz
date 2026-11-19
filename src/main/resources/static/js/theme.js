@@ -18,7 +18,11 @@
     if (!button) return;
 
     const isDark = () => preference ? preference === "dark" : system.matches;
-    const updateButton = () => button.setAttribute("aria-pressed", String(isDark()));
+    const updateButton = () => {
+      const mode = isDark() ? "Light mode" : "Dark mode";
+      button.textContent = mode;
+      button.setAttribute("aria-label", "Switch to " + mode.toLowerCase());
+    };
 
     updateButton();
     button.hidden = false;

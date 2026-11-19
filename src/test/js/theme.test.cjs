@@ -5,6 +5,12 @@ const { runInNewContext } = require("node:vm");
 
 const script = readFileSync("src/main/resources/static/js/theme.js", "utf8");
 
+function assertDestination(p, mode) {
+  assert.equal(p.button.textContent, mode + " mode");
+  assert.equal(p.attributes["aria-label"], "Switch to " + mode.toLowerCase() + " mode");
+  assert.equal(p.attributes["aria-pressed"], undefined);
+}
+
 function page({ stored, dark = false, blocked = false } = {}) {
   const dataset = {};
   const attributes = {};
@@ -56,9 +62,9 @@ test("system preference stays CSS-owned and tracks live changes", () => {
   assert.equal(p.button.hidden, true);
   p.ready();
   assert.equal(p.button.hidden, false);
-  assert.equal(p.attributes["aria-pressed"], "true");
+  assertDestination(p, "Light");
   p.systemChange(false);
-  assert.equal(p.attributes["aria-pressed"], "false");
+  assertDestination(p, "Dark");
   assert.equal(p.dataset.theme, undefined);
   assert.deepEqual(p.writes, []);
 });
@@ -68,9 +74,9 @@ for (const theme of ["light", "dark"]) {
     const p = page({ stored: theme, dark: theme === "light" });
     assert.equal(p.dataset.theme, theme);
     p.ready();
-    assert.equal(p.attributes["aria-pressed"], String(theme === "dark"));
+    assertDestination(p, theme === "dark" ? "Light" : "Dark");
     p.systemChange(true);
-    assert.equal(p.attributes["aria-pressed"], String(theme === "dark"));
+    assertDestination(p, theme === "dark" ? "Light" : "Dark");
   });
 }
 
@@ -79,15 +85,17 @@ test("toggle persists both directions and restores the choice on navigation", ()
   p.ready();
   p.click();
   assert.equal(p.dataset.theme, "dark");
-  assert.equal(p.attributes["aria-pressed"], "true");
+  assertDestination(p, "Light");
   assert.deepEqual(p.writes[0], ["jira-clone-theme", "dark"]);
   const next = page({ stored: p.writes[0][1] });
   assert.equal(next.dataset.theme, "dark");
+  next.ready();
+  assertDestination(next, "Light");
   p.systemChange(false);
-  assert.equal(p.attributes["aria-pressed"], "true");
+  assertDestination(p, "Light");
   p.click();
   assert.equal(p.dataset.theme, "light");
-  assert.equal(p.attributes["aria-pressed"], "false");
+  assertDestination(p, "Dark");
   assert.deepEqual(p.writes[1], ["jira-clone-theme", "light"]);
 });
 
@@ -95,7 +103,7 @@ test("unrecognized storage values fall back to system preference", () => {
   const p = page({ stored: "invalid", dark: true });
   p.ready();
   assert.equal(p.dataset.theme, undefined);
-  assert.equal(p.attributes["aria-pressed"], "true");
+  assertDestination(p, "Light");
 });
 
 test("blocked storage does not prevent switching on the current page", () => {
@@ -103,7 +111,8 @@ test("blocked storage does not prevent switching on the current page", () => {
   p.ready();
   p.click();
   assert.equal(p.dataset.theme, "light");
-  assert.equal(p.attributes["aria-pressed"], "false");
+  assertDestination(p, "Dark");
   p.click();
   assert.equal(p.dataset.theme, "dark");
+  assertDestination(p, "Light");
 });
