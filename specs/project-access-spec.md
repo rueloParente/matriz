@@ -59,6 +59,7 @@ Mutations are `POST` so they work from native forms; htmx enhances them and swap
 - **Dashboard counts** — For each accessible project, counts are over all of the project's issues per status (`TO_DO`, `IN_PROGRESS`, `DONE`), not over a visible page, and a status with no issues shows `0`. The counts reflect the state at request time; mutations never require a manual reload because the affected fragment is re-rendered from the stored data.
 - **Empty states** — A user with no accessible projects sees an empty-state message on the dashboard and on `/projects`.
 - **Board-first dashboard** — Accessible projects appear as board entry cards with clearly labeled status counts. Each card links directly to its board and offers a secondary issue-list link. The empty dashboard offers a create-project link. The shared signed-in navigation includes a Boards link back to this overview. Existing project routes and redirects remain unchanged.
+- **Project completion** — A thin progress bar blends into the top edge of each dashboard card. Completion is the rounded percentage of all project issues that are Done; projects without issues show an empty bar. Each bar has an accessible project-specific label, percentage, and completed/total issue count, rendered from current server state on each dashboard request.
 
 ## Requirements
 

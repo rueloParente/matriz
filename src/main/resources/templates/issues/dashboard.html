@@ -19,6 +19,11 @@
   </div>
   <div th:unless="${#lists.isEmpty(projects)}" class="board-directory">
     <article class="board-entry" th:each="summary : ${projects}" th:attr="data-project=${summary.project.key}">
+      <div class="board-entry-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+           th:attr="aria-label=${summary.project.name + ' completion'},aria-valuenow=${summary.completionPercent()},
+                    aria-valuetext=${summary.completedIssues() + ' of ' + summary.totalIssues() + ' issues done'}">
+        <span th:style="'width: ' + ${summary.completionPercent()} + '%'"></span>
+      </div>
       <span class="project-key" th:text="${summary.project.key}">PROJ</span>
       <h2><a th:href="@{/projects/{key}/board(key=${summary.project.key})}" th:text="${summary.project.name}">Project</a></h2>
       <dl class="board-entry-counts">

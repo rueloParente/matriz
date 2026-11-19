@@ -48,6 +48,38 @@ class DashboardTests extends AbstractIntegrationTest {
 	}
 
 	@Test
+	void completionBarShowsEmptyPartialAndCompletedProjects() throws Exception {
+		String key = key();
+		project("alice", key);
+		progress(key, 0, 0, 0);
+		for (int i = 0; i < 3; i++) issue(key);
+		progress(key, 0, 3, 0);
+		for (int number = 1; number <= 3; number++) {
+			mvc.perform(post("/projects/" + key + "/issues/" + number + "/status")
+					.with(user("alice")).with(csrf()).param("value", "DONE"))
+					.andExpect(status().isOk());
+			progress(key, number, 3, Math.round(100.0 * number / 3));
+		}
+		mvc.perform(post("/projects/" + key + "/issues/1/status")
+				.with(user("alice")).with(csrf()).param("value", "IN_PROGRESS"))
+				.andExpect(status().isOk());
+		progress(key, 2, 3, 67);
+		mvc.perform(post("/projects/" + key + "/issues/1/delete").with(user("alice")).with(csrf()))
+				.andExpect(status().isFound());
+		progress(key, 2, 2, 100);
+	}
+
+	private void progress(String key, long done, long total, long percent) throws Exception {
+		String html = dashboard("alice");
+		int start = html.indexOf("data-project=\"" + key + "\"");
+		String card = html.substring(start, html.indexOf("</article>", start));
+		assertThat(card).contains("role=\"progressbar\"", "aria-valuemin=\"0\"", "aria-valuemax=\"100\"",
+				"aria-label=\"Dashboard " + key + " completion\"", "aria-valuenow=\"" + percent + "\"",
+				"aria-valuetext=\"" + done + " of " + total + " issues done\"",
+				"style=\"width: " + percent + "%\"");
+	}
+
+	@Test
 	void countsEveryIssueAndRefreshesAfterStatusCreateAndDelete() throws Exception {
 		String key = key();
 		project("alice", key);
