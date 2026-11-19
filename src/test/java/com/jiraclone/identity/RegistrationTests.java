@@ -38,7 +38,10 @@ class RegistrationTests extends AbstractIntegrationTest {
 
 	@AfterEach
 	void removeRegisteredUsers() {
-		jdbc.update("delete from app_user where username not in ('alice', 'bob', 'carol')");
+		jdbc.update("""
+				delete from app_user
+				where lower(username) in ('new.user-1', 'fresh.user', 'race.user17', 'mixedcase19', 'trimmed21')
+				""");
 	}
 
 	private MvcResult register(String username, String password, String confirmation) throws Exception {
