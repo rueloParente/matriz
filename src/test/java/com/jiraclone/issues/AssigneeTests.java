@@ -52,12 +52,19 @@ class AssigneeTests extends AbstractIntegrationTest {
 			String html = mvc.perform(request.with(user("alice")))
 					.andExpect(status().isOk())
 					.andReturn().getResponse().getContentAsString();
-			assertThat(html).contains("<select id=\"assignee-user\" name=\"userId\" required>")
+			assertThat(html).contains("<select id=\"assignee-user\" name=\"userId\" class=\"form-select\" required>")
+					.contains("class=\"assignee-form\"")
+					.contains("class=\"btn btn-primary btn-sm\">Add</button>")
 					.contains("<option value=\"" + carol + "\">Carol Clark</option>")
 					.doesNotContain("<input id=\"assignee-user\"");
 			var add = post(base + "/assignees").with(user("alice")).with(csrf()).param("userId", carol);
 			if (htmx) add.header("HX-Request", "true");
 			mvc.perform(add).andExpect(htmx ? status().isOk() : status().isFound());
+			String assignedHtml = mvc.perform(get(base + "/assignees").with(user("alice"))
+							.header("HX-Request", "true")).andExpect(status().isOk())
+					.andReturn().getResponse().getContentAsString();
+			assertThat(assignedHtml).contains("class=\"form-select\"")
+					.contains("class=\"btn btn-outline-secondary btn-sm\">Remove</button>");
 			mvc.perform(get(base).with(user("carol"))).andExpect(status().isOk());
 			mvc.perform(post(base + "/assignees/" + carol + "/delete").with(user("alice")).with(csrf()))
 					.andExpect(status().isFound());

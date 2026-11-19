@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="htmx-config" content='{"responseHandling":[{"code":"204","swap":false},{"code":"[23]..","swap":true},{"code":"422","swap":true},{"code":"[45]..","swap":false,"error":true}]}'>
   <title th:replace="${title}">Jira clone</title>
+  <script th:src="@{/js/theme.js}"></script>
   <link rel="stylesheet" th:href="@{/css/app.css}">
   <script th:src="@{/js/htmx.min.js}" defer></script>
   <script th:src="@{/js/sortable.min.js}" defer></script>
@@ -14,6 +15,8 @@
   <a class="navbar-brand" href="/">Jira <span>clone</span></a>
   <a class="nav-projects" th:if="${currentUser != null}" th:href="@{/projects}">Projects</a>
   <div id="navbar-slot" class="ms-auto d-flex align-items-center">
+    <button id="theme-toggle" type="button" class="btn btn-outline-light btn-sm theme-toggle"
+            aria-pressed="false" hidden>Dark mode</button>
     <th:block th:if="${currentUser == null}">
       <a class="public-login" th:href="@{/login}">Log in</a>
       <a class="btn btn-outline-light btn-sm" th:href="@{/register}">Get started</a>

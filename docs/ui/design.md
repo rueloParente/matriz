@@ -15,6 +15,16 @@ This document describes the screens of the Jira clone and records the low-fideli
 | Layout | Global navbar, then a project header with project tabs, then the page content |
 | Interaction | Links and forms work as plain HTML; htmx swaps fragments; SortableJS only on the board |
 | Text | Plain text only; user content is always escaped |
+| Theme | System-aware light/dark palettes using CSS `light-dark()` (modern browsers); shared navbar “Dark mode” toggle with a browser-local preference |
+
+The theme script applies a saved choice before the stylesheet renders; without a
+saved choice (or without JavaScript), CSS follows the system color scheme.
+The toggle is hidden without JavaScript. This is browser presentation state,
+not account or business state; HTMX fragments inherit the page palette.
+See [theme requirements](../../specs/theme-spec.md).
+
+The assignee picker reuses the shared select, label, and button styles in both
+the issue page and HTMX fragments. Its add controls wrap on narrow screens.
 
 ## 2. Screens
 

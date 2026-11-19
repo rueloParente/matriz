@@ -17,6 +17,7 @@ Each feature has two files:
 | Activity history | `HST` | [spec](activity-history-spec.md) | [tasks](activity-history-tasks.md) | `history` | Implemented |
 | Sprints | `SPR` | [spec](sprints-spec.md) | [tasks](sprints-tasks.md) | `sprints` | Implemented |
 | Project access, lifecycle and assignees | `ACC`, `ASG`, `PRJ-D`, `ISS-D` | [spec](project-access-spec.md) | [tasks](project-access-tasks.md) | `projects`, `issues` | Implemented |
+| Light and dark theme | `THM` | [spec](theme-spec.md) | [tasks](theme-tasks.md) | Shared presentation | Implemented |
 
 **Precedence:** `project-access-spec.md` was written after the others. It adds ownership and membership, several assignees per issue, editing and deletion, and the dashboard. Where it overrides an earlier spec, that spec links to it.
 
