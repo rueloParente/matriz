@@ -17,8 +17,12 @@
           th:hx-post="@{/projects/{key}/issues/{number}/assignees(key=${project.key},number=${number})}" hx-target="#issue-assignees" hx-swap="outerHTML">
       <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
       <label for="assignee-user">Add assignee</label>
-      <input id="assignee-user" name="userId" th:value="${userId}" list="eligible-assignees">
-      <datalist id="eligible-assignees"><option th:each="person : ${eligible}" th:value="${person.id}" th:text="${person.displayName}">Person</option></datalist>
+      <select id="assignee-user" name="userId" required>
+        <option value="" disabled th:selected="${userId == null or userId == ''}">Choose a person</option>
+        <option th:if="${error != null}" th:value="${userId}" selected disabled
+                th:text="|Unavailable user (${userId})|">Unavailable user</option>
+        <option th:each="person : ${eligible}" th:value="${person.id}" th:text="${person.displayName}">Person</option>
+      </select>
       <button type="submit">Add</button>
     </form>
   </div>

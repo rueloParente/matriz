@@ -44,6 +44,27 @@ class AssigneeTests extends AbstractIntegrationTest {
 	}
 
 	@Test
+	void assigneeDropdownSubmitsCarolIdForOrdinaryAndHtmxRequests() throws Exception {
+		String base = issue();
+		String carol = String.valueOf(id("carol"));
+		for (boolean htmx : List.of(false, true)) {
+			var request = htmx ? get(base + "/assignees").header("HX-Request", "true") : get(base);
+			String html = mvc.perform(request.with(user("alice")))
+					.andExpect(status().isOk())
+					.andReturn().getResponse().getContentAsString();
+			assertThat(html).contains("<select id=\"assignee-user\" name=\"userId\" required>")
+					.contains("<option value=\"" + carol + "\">Carol Clark</option>")
+					.doesNotContain("<input id=\"assignee-user\"");
+			var add = post(base + "/assignees").with(user("alice")).with(csrf()).param("userId", carol);
+			if (htmx) add.header("HX-Request", "true");
+			mvc.perform(add).andExpect(htmx ? status().isOk() : status().isFound());
+			mvc.perform(get(base).with(user("carol"))).andExpect(status().isOk());
+			mvc.perform(post(base + "/assignees/" + carol + "/delete").with(user("alice")).with(csrf()))
+					.andExpect(status().isFound());
+		}
+	}
+
+	@Test
 	void addRemoveEligibilityHistoryAndRevocation() throws Exception {
 		String base = issue();
 		String url = base + "/assignees";
